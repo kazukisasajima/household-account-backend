@@ -1,0 +1,7 @@
+package: presenter
+generate:
+  models: true
+  client: true
+  embedded-spec: true
+  echo-server: true
+output: ./adapter/controller/echo/presenter/api.go

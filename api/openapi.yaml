@@ -1,0 +1,368 @@
+openapi: 3.0.3
+info:
+  title: Task Management API
+  version: 1.0.0
+servers:
+  - url: http://0.0.0.0:8080/api/v1
+  - url: http://localhost:8080/api/v1
+  - url: http://127.0.0.1:8080/api/v1
+paths:
+  /users:
+    get:
+      tags:
+        - users
+      summary: Get the current user's information
+      operationId: getCurrentUser
+      responses:
+        "200":
+          $ref: "#/components/responses/UserResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []  # 認証が必須
+    patch:
+      tags:
+        - users
+      summary: Update the current user
+      operationId: updateCurrentUser
+      requestBody:
+        $ref: "#/components/requestBodies/UserUpdateRequest"
+        required: true
+      responses:
+        "200":
+          $ref: "#/components/responses/UserResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []  # 認証が必須
+    delete:
+      tags:
+        - users
+      summary: Delete the current user
+      operationId: deleteCurrentUser
+      responses:
+        "204":
+          description: User deleted
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []  # 認証が必須
+
+  /auth/signup:
+    post:
+      summary: Create a new user
+      operationId: createUser
+      requestBody:
+        $ref: "#/components/requestBodies/UserCreateRequest"
+        required: true
+      responses:
+        "201":
+          $ref: "#/components/responses/UserResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []  # X-CSRF-TOKEN を要求             
+  /auth/login:
+    post:
+      summary: Log in a user
+      operationId: loginUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+              required:
+                - email
+                - password
+        required: true
+      responses:
+        "200":
+          description: Login successful
+          headers:
+            Set-Cookie:
+              description: Session or JWT Cookie
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  csrf_token:
+                    type: string
+                required:
+                  - message
+                  - auth_token
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+  /auth/logout:
+    post:
+      summary: Log out a user
+      operationId: logoutUser
+      responses:
+        "200":
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+      security:
+        - CsrfAuth: []  # X-CSRF-TOKEN を要求                     
+  /auth/csrf:
+    get:
+      summary: Get a CSRF token
+      operationId: getCsrfToken
+      responses:
+        "200":
+          description: CSRF token retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  csrf_token:
+                    type: string
+                required:
+                  - auth_token
+  # /categories:
+  #   get:
+  #     summary: Get all categories
+  #     operationId: getCategories
+  #     responses:
+  #       "200":
+  #         description: Categories retrieved
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: array
+  #               items:
+  #                 type: object
+  #                 properties:
+  #                   id:
+  #                     type: integer
+  #                   name:
+  #                     type: string
+  #                 required:
+  #                   - id
+  #                   - name
+  #       "400":
+  #         $ref: "#/components/responses/ErrorResponse"
+  #   post:
+  #     summary: Create a new category
+  #     operationId: createCategory
+  #     requestBody:
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             properties:
+  #               name:
+  #                 type: string
+  #             required:
+  #               - name
+  #     responses:
+  #       "201":
+  #         description: Category created
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 id:
+  #                   type: integer
+  #                 name:
+  #                   type: string
+  #               required:
+  #                 - id
+  #                 - name
+  #       "400":
+  #         $ref: "#/components/responses/ErrorResponse"
+  # /categories/{id}:
+  #   get:
+  #     tags:
+  #       - categories
+  #     summary: Get a category by ID
+  #     operationId: getCategoryById
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         required: true
+  #         schema:
+  #           type: integer
+  #     responses:
+  #       "200":
+  #         description: Category retrieved
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 id:
+  #                   type: integer
+  #                 name:
+  #                   type: string
+  #               required:
+  #                 - id
+  #                 - name
+  #       "400":
+  #         $ref: "#/components/responses/ErrorResponse"
+  #       "404":
+  #         $ref: "#/components/responses/ErrorResponse"
+  #     security:
+  #       - CsrfAuth: []  # 認証が必須
+  #   patch:
+  #     tags:
+  #       - categories
+  #     summary: Update a category by ID
+  #     operationId: updateCategoryById
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         required: true
+  #         schema:
+  #           type: integer
+  #     requestBody:
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             properties:
+  #               name:
+  #                 type: string
+  #             required:
+  #               - name
+  #     responses:
+  #       "200":
+  #         description: Category updated
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 id:
+  #                   type: integer
+  #                 name:
+  #                   type: string
+  #               required:
+  #                 - id
+  #                 - name
+  #       "400":
+  #         $ref: "#/components/responses/ErrorResponse"
+  #       "404":
+  #         $ref: "#/components/responses/ErrorResponse"
+  #     security:
+  #       - CsrfAuth: []  # 認証が必須
+  #   delete:
+  #     tags:
+  #       - categories
+  #     summary: Delete a category by ID
+  #     operationId: deleteCategoryById
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         required: true
+  #         schema:
+  #           type: integer
+  #     responses:
+  #       "204":
+  #         description: Category deleted
+  #       "400":
+  #         $ref: "#/components/responses/ErrorResponse"
+  #       "404":
+  #         $ref: "#/components/responses/ErrorResponse"
+  #     security:
+  #       - CsrfAuth: []  # 認証が必須    
+components:
+  securitySchemes:
+    CsrfAuth:
+      type: apiKey
+      in: header
+      name: X-CSRF-TOKEN  # カスタムヘッダー名を指定
+  schemas:      
+    UserCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:  # 必須フィールドを指定
+        - name
+        - email
+        - password          
+    UserUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - name
+        - email
+        - password
+  requestBodies:
+    UserCreateRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UserCreateRequest"
+    UserUpdateRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UserUpdateRequest"        
+  responses:            
+    UserResponse:
+      description: User response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              email:
+                type: string
+              name:
+                type: string  
+            required:
+              - id
+              - name
+              - email
+    ErrorResponse:
+      description: Error response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+            required:
+              - message
