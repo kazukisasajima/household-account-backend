@@ -1,4 +1,4 @@
-package usecase
+package usecase_test
 
 import (
 	"testing"
@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"household-account-backend/entity"
+	"household-account-backend/usecase"
 )
 
 type mockUserRepository struct {
@@ -56,121 +57,127 @@ func (m *mockUserRepository) GetUserByEmail(email string) (*entity.User, error) 
 
 type UserUseCaseSuite struct {
 	suite.Suite
-	userUseCase UserUseCase
+	userUseCase usecase.UserUseCase
 }
 
-func TestUserUseCaseTestSuite(t *testing.T) {
+func TestUserUseCaseSuite(t *testing.T) {
 	suite.Run(t, new(UserUseCaseSuite))
 }
 
 func (suite *UserUseCaseSuite) TestSignup() {
 	email := "test@example.com"
 	password := "password123"
-	hashedPassword, _ := HashPassword(password)
-	mockUserRepository := NewMockUserRepository()
-	suite.userUseCase = NewUserUseCase(mockUserRepository)
+	hashedPassword, _ := usecase.HashPassword(password)
+	mockRepo := NewMockUserRepository()
+	suite.userUseCase = usecase.NewUserUseCase(mockRepo)
 
 	user := &entity.User{
 		Email:    email,
 		Password: password,
-		Name:    "Jhone",
+		Name:     "John",
 	}
 
-	mockUserRepository.On("Signup", mock.AnythingOfType("*entity.User")).Return(&entity.User{
+	mockRepo.On("Signup", mock.AnythingOfType("*entity.User")).Return(&entity.User{
 		ID:       1,
 		Email:    email,
 		Password: hashedPassword,
-		Name:    "Jhone",
+		Name:     "John",
 	}, nil)
 
 	createdUser, err := suite.userUseCase.Signup(user)
 	suite.Assert().Nil(err)
 	suite.Assert().Equal(email, createdUser.Email)
-	suite.Assert().True(CheckPasswordHash(password, createdUser.Password))
+	suite.Assert().True(usecase.CheckPasswordHash(password, createdUser.Password))
 }
 
-func (suite *UserUseCaseSuite) TestLogin() {
+func (suite *UserUseCaseSuite) TestLogin_Success() {
 	email := "test@example.com"
 	password := "password123"
-	hashedPassword, _ := HashPassword(password)
-	mockUserRepository := NewMockUserRepository()
-	suite.userUseCase = NewUserUseCase(mockUserRepository)
+	hashedPassword, _ := usecase.HashPassword(password)
+	mockRepo := NewMockUserRepository()
+	suite.userUseCase = usecase.NewUserUseCase(mockRepo)
 
-	users := &entity.User{
-		Email:    email,
-		Password: password,
-	}
-
-	mockUserRepository.On("GetUserByEmail", email).Return(&entity.User{
+	mockRepo.On("GetUserByEmail", email).Return(&entity.User{
 		ID:       1,
 		Email:    email,
 		Password: hashedPassword,
 	}, nil)
 
-	jwt, err := suite.userUseCase.Login(users)
+	token, err := suite.userUseCase.Login(&entity.Credentials{Email: email, Password: password})
 	suite.Assert().Nil(err)
-	suite.Assert().NotEmpty(jwt)
+	suite.Assert().NotEmpty(token)
+}
+
+func (suite *UserUseCaseSuite) TestLogin_InvalidCredentials() {
+	email := "test@example.com"
+	password := "wrongpassword"
+	mockRepo := NewMockUserRepository()
+	suite.userUseCase = usecase.NewUserUseCase(mockRepo)
+
+	mockRepo.On("GetUserByEmail", email).Return(&entity.User{
+		ID:       1,
+		Email:    email,
+		Password: "hashedpassword",
+	}, nil)
+
+	token, err := suite.userUseCase.Login(&entity.Credentials{Email: email, Password: password})
+	suite.Assert().NotNil(err)
+	suite.Assert().Empty(token)
+	suite.Assert().EqualError(err, "invalid credentials")
 }
 
 func (suite *UserUseCaseSuite) TestGetCurrentUser() {
 	userID := 1
 	email := "test@example.com"
-	password := "password123"
-	name := "Jhone"
-	mockUserRepository := NewMockUserRepository()
-	suite.userUseCase = NewUserUseCase(mockUserRepository)
+	name := "John"
+	mockRepo := NewMockUserRepository()
+	suite.userUseCase = usecase.NewUserUseCase(mockRepo)
 
-	mockUserRepository.On("GetCurrentUser", userID).Return(&entity.User{
-		ID:       userID,
-		Email:    email,
-		Password: password,
-		Name:     name,
+	mockRepo.On("GetCurrentUser", userID).Return(&entity.User{
+		ID:    userID,
+		Email: email,
+		Name:  name,
 	}, nil)
 
 	user, err := suite.userUseCase.GetCurrentUser(userID)
 	suite.Assert().Nil(err)
 	suite.Assert().Equal(userID, user.ID)
 	suite.Assert().Equal(email, user.Email)
-	suite.Assert().Equal(password, user.Password)
 	suite.Assert().Equal(name, user.Name)
 }
 
 func (suite *UserUseCaseSuite) TestUpdateUser() {
 	userID := 1
 	email := "test@example.com"
-	password := "password123"
-	name := "Jhone"
-	mockUserRepository := NewMockUserRepository()
-	suite.userUseCase = NewUserUseCase(mockUserRepository)
+	name := "John"
+	mockRepo := NewMockUserRepository()
+	suite.userUseCase = usecase.NewUserUseCase(mockRepo)
 
-	mockUserRepository.On("UpdateUser", mock.AnythingOfType("*entity.User")).Return(&entity.User{
-		ID:       userID,
-		Email:    email,
-		Password: password,
-		Name:     name,
-	}, nil)
-		
-	user := &entity.User{
-		ID: userID,
+	mockRepo.On("UpdateUser", mock.AnythingOfType("*entity.User")).Return(&entity.User{
+		ID:    userID,
 		Email: email,
-		Password: password,
-		Name: name,
+		Name:  name,
+	}, nil)
+
+	user := &entity.User{
+		ID:    userID,
+		Email: email,
+		Name:  name,
 	}
 
 	updatedUser, err := suite.userUseCase.UpdateUser(user)
 	suite.Assert().Nil(err)
 	suite.Assert().Equal(userID, updatedUser.ID)
 	suite.Assert().Equal(email, updatedUser.Email)
-	suite.Assert().Equal(password, updatedUser.Password)
 	suite.Assert().Equal(name, updatedUser.Name)
 }
 
 func (suite *UserUseCaseSuite) TestDeleteUser() {
 	userID := 1
-	mockUserRepository := NewMockUserRepository()
-	suite.userUseCase = NewUserUseCase(mockUserRepository)
+	mockRepo := NewMockUserRepository()
+	suite.userUseCase = usecase.NewUserUseCase(mockRepo)
 
-	mockUserRepository.On("DeleteUser", userID).Return(nil)
+	mockRepo.On("DeleteUser", userID).Return(nil)
 
 	err := suite.userUseCase.DeleteUser(userID)
 	suite.Assert().Nil(err)

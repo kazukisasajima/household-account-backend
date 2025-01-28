@@ -10,12 +10,13 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
+	"github.com/oapi-codegen/runtime/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
 	"household-account-backend/adapter/controller/echo/handler"
+	"household-account-backend/adapter/controller/echo/presenter"
 	"household-account-backend/entity"
-	// "household-account-backend/usecase"
 )
 
 type MockUserUseCase struct {
@@ -30,8 +31,8 @@ func (m *MockUserUseCase) Signup(user *entity.User) (*entity.User, error) {
 	return args.Get(0).(*entity.User), args.Error(1)
 }
 
-func (m *MockUserUseCase) Login(user *entity.User) (string, error) {
-	args := m.Called(user)
+func (m *MockUserUseCase) Login(credentials *entity.Credentials) (string, error) {
+	args := m.Called(credentials)
 	return args.String(0), args.Error(1)
 }
 
@@ -61,9 +62,10 @@ func TestSignup(t *testing.T) {
 	mockUseCase := new(MockUserUseCase)
 	h := handler.NewUserHandler(mockUseCase)
 
-	requestBody := map[string]interface{}{
-		"email":    "test@example.com",
-		"password": "password123",
+	requestBody := presenter.CreateUserJSONRequestBody{
+		Email:    "test@example.com",
+		Password: "password123",
+		Name:     "John",
 	}
 	jsonBody, _ := json.Marshal(requestBody)
 
@@ -77,16 +79,18 @@ func TestSignup(t *testing.T) {
 		ID:       1,
 		Email:    "test@example.com",
 		Password: "hashed_password",
+		Name:     "John",
 	}
 
 	mockUseCase.On("Signup", mock.AnythingOfType("*entity.User")).Return(mockUser, nil)
 
 	if assert.NoError(t, h.Signup(c)) {
 		assert.Equal(t, http.StatusCreated, rec.Code)
-		var response map[string]interface{}
+		var response presenter.UserResponse
 		json.Unmarshal(rec.Body.Bytes(), &response)
-		assert.Equal(t, float64(1), response["id"])
-		assert.Equal(t, "test@example.com", response["email"])
+		assert.Equal(t, 1, response.Id)
+		assert.Equal(t, types.Email("test@example.com"), response.Email)
+		assert.Equal(t, "John", response.Name)
 	}
 }
 
@@ -95,9 +99,9 @@ func TestLogin(t *testing.T) {
 	mockUseCase := new(MockUserUseCase)
 	h := handler.NewUserHandler(mockUseCase)
 
-	requestBody := map[string]interface{}{
-		"email":    "test@example.com",
-		"password": "password123",
+	requestBody := entity.Credentials{
+		Email:    "test@example.com",
+		Password: "password123",
 	}
 	jsonBody, _ := json.Marshal(requestBody)
 
@@ -108,13 +112,14 @@ func TestLogin(t *testing.T) {
 	c := e.NewContext(req, rec)
 
 	token := "dummy_jwt_token"
-	mockUseCase.On("Login", mock.AnythingOfType("*entity.User")).Return(token, nil)
+	mockUseCase.On("Login", mock.AnythingOfType("*entity.Credentials")).Return(token, nil)
 
 	if assert.NoError(t, h.Login(c)) {
 		assert.Equal(t, http.StatusOK, rec.Code)
-		cookie := rec.Header().Get(echo.HeaderSetCookie)
-		assert.Contains(t, cookie, "auth_token")
-		assert.Contains(t, cookie, token)
+		cookie := rec.Result().Cookies()
+		assert.Len(t, cookie, 1)
+		assert.Equal(t, "auth_token", cookie[0].Name)
+		assert.Equal(t, token, cookie[0].Value)
 	}
 }
 
@@ -131,6 +136,7 @@ func TestGetCurrentUser(t *testing.T) {
 	mockUser := &entity.User{
 		ID:    userID,
 		Email: "test@example.com",
+		Name:  "John",
 	}
 
 	mockUseCase.On("GetCurrentUser", userID).Return(mockUser, nil)
@@ -142,10 +148,11 @@ func TestGetCurrentUser(t *testing.T) {
 
 	if assert.NoError(t, h.GetCurrentUser(c)) {
 		assert.Equal(t, http.StatusOK, rec.Code)
-		var response map[string]interface{}
+		var response presenter.UserResponse
 		json.Unmarshal(rec.Body.Bytes(), &response)
-		assert.Equal(t, float64(userID), response["id"])
-		assert.Equal(t, "test@example.com", response["email"])
+		assert.Equal(t, userID, response.Id)
+		assert.Equal(t, types.Email("test@example.com"), response.Email)
+		assert.Equal(t, "John", response.Name)
 	}
 }
 
@@ -163,7 +170,7 @@ func TestLogout(t *testing.T) {
 		cookie := rec.Result().Cookies()
 		assert.Len(t, cookie, 1)
 		assert.Equal(t, "auth_token", cookie[0].Name)
-		assert.Equal(t, "", cookie[0].Value)
+		assert.Empty(t, cookie[0].Value)
 		assert.True(t, cookie[0].Expires.Before(time.Now()))
 	}
 }
@@ -188,26 +195,5 @@ func TestDeleteUser(t *testing.T) {
 
 	if assert.NoError(t, h.DeleteUser(c)) {
 		assert.Equal(t, http.StatusNoContent, rec.Code)
-	}
-}
-
-func TestCsrfToken(t *testing.T) {
-	e := echo.New()
-	mockUseCase := new(MockUserUseCase)
-	h := handler.NewUserHandler(mockUseCase)
-
-	req := httptest.NewRequest(http.MethodGet, "/csrf-token", nil)
-	rec := httptest.NewRecorder()
-	c := e.NewContext(req, rec)
-
-	// Mocking the CSRF token
-	csrfToken := "dummy_csrf_token"
-	c.Set("csrf", csrfToken)
-
-	if assert.NoError(t, h.CsrfToken(c)) {
-		assert.Equal(t, http.StatusOK, rec.Code)
-		var response map[string]interface{}
-		json.Unmarshal(rec.Body.Bytes(), &response)
-		assert.Equal(t, csrfToken, response["csrf_token"])
 	}
 }

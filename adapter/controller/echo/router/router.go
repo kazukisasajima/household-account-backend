@@ -52,7 +52,7 @@ func NewEchoRouter(db *gorm.DB) *echo.Echo {
 	router.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:     []string{"http://localhost:3000", os.Getenv("FE_URL")},
 		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAccessControlAllowHeaders, echo.HeaderXCSRFToken},
-		AllowMethods:     []string{"GET", "PUT", "POST", "DELETE"},
+		AllowMethods:     []string{"GET", "PUT", "PATCH", "POST", "DELETE"},
 		// AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
 		AllowCredentials: true,
 	}))
@@ -60,8 +60,8 @@ func NewEchoRouter(db *gorm.DB) *echo.Echo {
 		CookiePath:     "/",
 		CookieDomain:   os.Getenv("API_DOMAIN"),
 		CookieHTTPOnly: true,
-		CookieSameSite: http.SameSiteNoneMode,
-		// CookieSameSite: http.SameSiteDefaultMode,
+		// CookieSameSite: http.SameSiteNoneMode,
+		CookieSameSite: http.SameSiteDefaultMode,
 		// CookieMaxAge:   60,
 	}))
 
@@ -74,6 +74,18 @@ func NewEchoRouter(db *gorm.DB) *echo.Echo {
 	userRepository := gateway.NewUserRepository(db)
 	userUseCase := usecase.NewUserUseCase(userRepository)
 	userHandler := handler.NewUserHandler(userUseCase)
+
+	categoryRepository := gateway.NewCategoryRepository(db)
+	categoryUseCase := usecase.NewCategoryUseCase(categoryRepository)
+	categoryHandler := handler.NewCategoryHandler(categoryUseCase)
+
+	transactionRepository := gateway.NewTransactionRepository(db)
+	transactionUseCase := usecase.NewTransactionUseCase(transactionRepository)
+	transactionHandler := handler.NewTransactionHandler(transactionUseCase)
+
+	monthlySummaryRepository := gateway.NewMonthlySummaryRepository(db)
+	monthlySummaryUseCase := usecase.NewMonthlySummaryUseCase(monthlySummaryRepository)
+	monthlySummaryHandler := handler.NewMonthlySummaryHandler(monthlySummaryUseCase)
 
 	// ユーザー用エンドポイント
 	users := router.Group("/api/v1/users")
@@ -88,6 +100,33 @@ func NewEchoRouter(db *gorm.DB) *echo.Echo {
 	auth.POST("/signup", userHandler.Signup)
 	auth.POST("/logout", userHandler.Logout)
 	auth.GET("/csrf", userHandler.CsrfToken)
+
+	// カテゴリー用エンドポイント
+	categories := router.Group("/api/v1/categories")
+	categories.Use(mymiddleware.JWTMiddleware())
+	categories.GET("", categoryHandler.GetCategoriesByUserID)
+	categories.POST("", categoryHandler.CreateCategory)
+	categories.GET("/:id", categoryHandler.GetCategoryByID)
+	categories.PATCH("/:id", categoryHandler.UpdateCategory)
+	categories.DELETE("/:id", categoryHandler.DeleteCategory)
+
+	// 取引用エンドポイント
+	transactions := router.Group("/api/v1/transactions")
+	transactions.Use(mymiddleware.JWTMiddleware())
+	transactions.GET("", transactionHandler.GetTransactionsByUserID)
+	transactions.POST("", transactionHandler.CreateTransaction)
+	transactions.GET("/:id", transactionHandler.GetTransactionByID)
+	transactions.PATCH("/:id", transactionHandler.UpdateTransaction)
+	transactions.DELETE("/:id", transactionHandler.DeleteTransaction)
+
+	// 月次集計用エンドポイント
+	monthlySummaries := router.Group("/api/v1/monthly_summaries")
+	monthlySummaries.Use(mymiddleware.JWTMiddleware())
+	monthlySummaries.GET("", monthlySummaryHandler.GetMonthlySummariesByUserID)
+	monthlySummaries.POST("", monthlySummaryHandler.CreateMonthlySummary)
+	monthlySummaries.GET("/:id", monthlySummaryHandler.GetMonthlySummaryByID)
+	monthlySummaries.PATCH("/:id", monthlySummaryHandler.UpdateMonthlySummary)
+	monthlySummaries.DELETE("/:id", monthlySummaryHandler.DeleteMonthlySummary)
 
 	// Swagger やその他のルート
 	// router.GET("/", handler.Index)

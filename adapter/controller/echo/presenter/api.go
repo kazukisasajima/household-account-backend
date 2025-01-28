@@ -18,6 +18,7 @@ import (
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
+	"github.com/oapi-codegen/runtime"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
@@ -25,11 +26,119 @@ const (
 	CsrfAuthScopes = "CsrfAuth.Scopes"
 )
 
+// Defines values for CategoryCreateRequestType.
+const (
+	CategoryCreateRequestTypeExpense CategoryCreateRequestType = "expense"
+	CategoryCreateRequestTypeIncome  CategoryCreateRequestType = "income"
+)
+
+// Defines values for CategoryRequestType.
+const (
+	CategoryRequestTypeExpense CategoryRequestType = "expense"
+	CategoryRequestTypeIncome  CategoryRequestType = "income"
+)
+
+// Defines values for CategoryUpdateRequestType.
+const (
+	Expense CategoryUpdateRequestType = "expense"
+	Income  CategoryUpdateRequestType = "income"
+)
+
+// CategoryCreateRequest defines model for CategoryCreateRequest.
+type CategoryCreateRequest struct {
+	Name   string                    `json:"name"`
+	Type   CategoryCreateRequestType `json:"type"`
+	UserId int                       `json:"user_id"`
+}
+
+// CategoryCreateRequestType defines model for CategoryCreateRequest.Type.
+type CategoryCreateRequestType string
+
+// CategoryRequest defines model for CategoryRequest.
+type CategoryRequest struct {
+	Id   int                 `json:"id"`
+	Name string              `json:"name"`
+	Type CategoryRequestType `json:"type"`
+}
+
+// CategoryRequestType defines model for CategoryRequest.Type.
+type CategoryRequestType string
+
+// CategoryUpdateRequest defines model for CategoryUpdateRequest.
+type CategoryUpdateRequest struct {
+	Name string                    `json:"name"`
+	Type CategoryUpdateRequestType `json:"type"`
+}
+
+// CategoryUpdateRequestType defines model for CategoryUpdateRequest.Type.
+type CategoryUpdateRequestType string
+
+// MonthlySummaryCreateRequest defines model for MonthlySummaryCreateRequest.
+type MonthlySummaryCreateRequest struct {
+	Balance   float32 `json:"balance"`
+	Expense   float32 `json:"expense"`
+	Income    float32 `json:"income"`
+	UserId    int     `json:"user_id"`
+	YearMonth string  `json:"year_month"`
+}
+
+// MonthlySummaryRequest defines model for MonthlySummaryRequest.
+type MonthlySummaryRequest struct {
+	Balance   float32 `json:"balance"`
+	Expense   float32 `json:"expense"`
+	Id        int     `json:"id"`
+	Income    float32 `json:"income"`
+	YearMonth string  `json:"year_month"`
+}
+
+// MonthlySummaryUpdateRequest defines model for MonthlySummaryUpdateRequest.
+type MonthlySummaryUpdateRequest struct {
+	Balance   float32 `json:"balance"`
+	Expense   float32 `json:"expense"`
+	Income    float32 `json:"income"`
+	YearMonth string  `json:"year_month"`
+}
+
+// TransactionCreateRequest defines model for TransactionCreateRequest.
+type TransactionCreateRequest struct {
+	Amount     float32            `json:"amount"`
+	CategoryId int                `json:"category_id"`
+	Content    *string            `json:"content,omitempty"`
+	Date       openapi_types.Date `json:"date"`
+	UserId     int                `json:"user_id"`
+}
+
+// TransactionRequest defines model for TransactionRequest.
+type TransactionRequest struct {
+	Amount     float32            `json:"amount"`
+	CategoryId int                `json:"category_id"`
+	Content    *string            `json:"content,omitempty"`
+	Date       openapi_types.Date `json:"date"`
+	Id         int                `json:"id"`
+	UserId     int                `json:"user_id"`
+}
+
+// TransactionUpdateRequest defines model for TransactionUpdateRequest.
+type TransactionUpdateRequest struct {
+	Amount     float32            `json:"amount"`
+	CategoryId int                `json:"category_id"`
+	Content    *string            `json:"content,omitempty"`
+	Date       openapi_types.Date `json:"date"`
+	UserId     int                `json:"user_id"`
+}
+
 // UserCreateRequest defines model for UserCreateRequest.
 type UserCreateRequest struct {
 	Email    openapi_types.Email `json:"email"`
 	Name     string              `json:"name"`
 	Password string              `json:"password"`
+}
+
+// UserRequest defines model for UserRequest.
+type UserRequest struct {
+	Email openapi_types.Email `json:"email"`
+	Id    int                 `json:"id"`
+	Name  string              `json:"name"`
 }
 
 // UserUpdateRequest defines model for UserUpdateRequest.
@@ -39,17 +148,46 @@ type UserUpdateRequest struct {
 	Password string              `json:"password"`
 }
 
+// CategoryResponse defines model for CategoryResponse.
+type CategoryResponse = CategoryRequest
+
 // ErrorResponse defines model for ErrorResponse.
 type ErrorResponse struct {
 	Message string `json:"message"`
 }
 
+// MonthlySummaryResponse defines model for MonthlySummaryResponse.
+type MonthlySummaryResponse = MonthlySummaryRequest
+
+// TransactionResponse defines model for TransactionResponse.
+type TransactionResponse = TransactionRequest
+
 // UserResponse defines model for UserResponse.
-type UserResponse struct {
-	Email string `json:"email"`
-	Id    int    `json:"id"`
-	Name  string `json:"name"`
-}
+type UserResponse = UserRequest
+
+// CategoryCreateRequestBody defines model for CategoryCreateRequestBody.
+type CategoryCreateRequestBody = CategoryCreateRequest
+
+// CategoryUpdateRequestBody defines model for CategoryUpdateRequestBody.
+type CategoryUpdateRequestBody = CategoryUpdateRequest
+
+// MonthlySummaryCreateRequestBody defines model for MonthlySummaryCreateRequestBody.
+type MonthlySummaryCreateRequestBody = MonthlySummaryCreateRequest
+
+// MonthlySummaryUpdateRequestBody defines model for MonthlySummaryUpdateRequestBody.
+type MonthlySummaryUpdateRequestBody = MonthlySummaryUpdateRequest
+
+// TransactionCreateRequestBody defines model for TransactionCreateRequestBody.
+type TransactionCreateRequestBody = TransactionCreateRequest
+
+// TransactionUpdateRequestBody defines model for TransactionUpdateRequestBody.
+type TransactionUpdateRequestBody = TransactionUpdateRequest
+
+// UserCreateRequestBody defines model for UserCreateRequestBody.
+type UserCreateRequestBody = UserCreateRequest
+
+// UserUpdateRequestBody defines model for UserUpdateRequestBody.
+type UserUpdateRequestBody = UserUpdateRequest
 
 // LoginUserJSONBody defines parameters for LoginUser.
 type LoginUserJSONBody struct {
@@ -62,6 +200,24 @@ type LoginUserJSONRequestBody LoginUserJSONBody
 
 // CreateUserJSONRequestBody defines body for CreateUser for application/json ContentType.
 type CreateUserJSONRequestBody = UserCreateRequest
+
+// CreateCategoryJSONRequestBody defines body for CreateCategory for application/json ContentType.
+type CreateCategoryJSONRequestBody = CategoryCreateRequest
+
+// UpdateCategoryByIdJSONRequestBody defines body for UpdateCategoryById for application/json ContentType.
+type UpdateCategoryByIdJSONRequestBody = CategoryUpdateRequest
+
+// CreateMonthlySummaryJSONRequestBody defines body for CreateMonthlySummary for application/json ContentType.
+type CreateMonthlySummaryJSONRequestBody = MonthlySummaryCreateRequest
+
+// UpdateMonthlySummaryByIdJSONRequestBody defines body for UpdateMonthlySummaryById for application/json ContentType.
+type UpdateMonthlySummaryByIdJSONRequestBody = MonthlySummaryUpdateRequest
+
+// CreateTransactionJSONRequestBody defines body for CreateTransaction for application/json ContentType.
+type CreateTransactionJSONRequestBody = TransactionCreateRequest
+
+// UpdateTransactionByIdJSONRequestBody defines body for UpdateTransactionById for application/json ContentType.
+type UpdateTransactionByIdJSONRequestBody = TransactionUpdateRequest
 
 // UpdateCurrentUserJSONRequestBody defines body for UpdateCurrentUser for application/json ContentType.
 type UpdateCurrentUserJSONRequestBody = UserUpdateRequest
@@ -155,6 +311,63 @@ type ClientInterface interface {
 
 	CreateUser(ctx context.Context, body CreateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetCategories request
+	GetCategories(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateCategoryWithBody request with any body
+	CreateCategoryWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateCategory(ctx context.Context, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteCategoryById request
+	DeleteCategoryById(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetCategoryById request
+	GetCategoryById(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateCategoryByIdWithBody request with any body
+	UpdateCategoryByIdWithBody(ctx context.Context, id int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateCategoryById(ctx context.Context, id int, body UpdateCategoryByIdJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetMonthlySummaries request
+	GetMonthlySummaries(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateMonthlySummaryWithBody request with any body
+	CreateMonthlySummaryWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateMonthlySummary(ctx context.Context, body CreateMonthlySummaryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteMonthlySummaryById request
+	DeleteMonthlySummaryById(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetMonthlySummaryById request
+	GetMonthlySummaryById(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateMonthlySummaryByIdWithBody request with any body
+	UpdateMonthlySummaryByIdWithBody(ctx context.Context, id int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateMonthlySummaryById(ctx context.Context, id int, body UpdateMonthlySummaryByIdJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetTransactions request
+	GetTransactions(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateTransactionWithBody request with any body
+	CreateTransactionWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateTransaction(ctx context.Context, body CreateTransactionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteTransactionById request
+	DeleteTransactionById(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetTransactionById request
+	GetTransactionById(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateTransactionByIdWithBody request with any body
+	UpdateTransactionByIdWithBody(ctx context.Context, id int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateTransactionById(ctx context.Context, id int, body UpdateTransactionByIdJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// DeleteCurrentUser request
 	DeleteCurrentUser(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -229,6 +442,258 @@ func (c *Client) CreateUserWithBody(ctx context.Context, contentType string, bod
 
 func (c *Client) CreateUser(ctx context.Context, body CreateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateUserRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetCategories(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetCategoriesRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateCategoryWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateCategoryRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateCategory(ctx context.Context, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateCategoryRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteCategoryById(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteCategoryByIdRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetCategoryById(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetCategoryByIdRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateCategoryByIdWithBody(ctx context.Context, id int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateCategoryByIdRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateCategoryById(ctx context.Context, id int, body UpdateCategoryByIdJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateCategoryByIdRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetMonthlySummaries(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetMonthlySummariesRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateMonthlySummaryWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateMonthlySummaryRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateMonthlySummary(ctx context.Context, body CreateMonthlySummaryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateMonthlySummaryRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteMonthlySummaryById(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteMonthlySummaryByIdRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetMonthlySummaryById(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetMonthlySummaryByIdRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateMonthlySummaryByIdWithBody(ctx context.Context, id int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateMonthlySummaryByIdRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateMonthlySummaryById(ctx context.Context, id int, body UpdateMonthlySummaryByIdJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateMonthlySummaryByIdRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetTransactions(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTransactionsRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateTransactionWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateTransactionRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateTransaction(ctx context.Context, body CreateTransactionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateTransactionRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteTransactionById(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteTransactionByIdRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetTransactionById(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTransactionByIdRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateTransactionByIdWithBody(ctx context.Context, id int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateTransactionByIdRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateTransactionById(ctx context.Context, id int, body UpdateTransactionByIdJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateTransactionByIdRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -421,6 +886,552 @@ func NewCreateUserRequestWithBody(server string, contentType string, body io.Rea
 	return req, nil
 }
 
+// NewGetCategoriesRequest generates requests for GetCategories
+func NewGetCategoriesRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/categories")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateCategoryRequest calls the generic CreateCategory builder with application/json body
+func NewCreateCategoryRequest(server string, body CreateCategoryJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateCategoryRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateCategoryRequestWithBody generates requests for CreateCategory with any type of body
+func NewCreateCategoryRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/categories")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteCategoryByIdRequest generates requests for DeleteCategoryById
+func NewDeleteCategoryByIdRequest(server string, id int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/categories/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetCategoryByIdRequest generates requests for GetCategoryById
+func NewGetCategoryByIdRequest(server string, id int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/categories/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateCategoryByIdRequest calls the generic UpdateCategoryById builder with application/json body
+func NewUpdateCategoryByIdRequest(server string, id int, body UpdateCategoryByIdJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateCategoryByIdRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewUpdateCategoryByIdRequestWithBody generates requests for UpdateCategoryById with any type of body
+func NewUpdateCategoryByIdRequestWithBody(server string, id int, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/categories/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetMonthlySummariesRequest generates requests for GetMonthlySummaries
+func NewGetMonthlySummariesRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/monthly-summaries")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateMonthlySummaryRequest calls the generic CreateMonthlySummary builder with application/json body
+func NewCreateMonthlySummaryRequest(server string, body CreateMonthlySummaryJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateMonthlySummaryRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateMonthlySummaryRequestWithBody generates requests for CreateMonthlySummary with any type of body
+func NewCreateMonthlySummaryRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/monthly-summaries")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteMonthlySummaryByIdRequest generates requests for DeleteMonthlySummaryById
+func NewDeleteMonthlySummaryByIdRequest(server string, id int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/monthly-summaries/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetMonthlySummaryByIdRequest generates requests for GetMonthlySummaryById
+func NewGetMonthlySummaryByIdRequest(server string, id int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/monthly-summaries/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateMonthlySummaryByIdRequest calls the generic UpdateMonthlySummaryById builder with application/json body
+func NewUpdateMonthlySummaryByIdRequest(server string, id int, body UpdateMonthlySummaryByIdJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateMonthlySummaryByIdRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewUpdateMonthlySummaryByIdRequestWithBody generates requests for UpdateMonthlySummaryById with any type of body
+func NewUpdateMonthlySummaryByIdRequestWithBody(server string, id int, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/monthly-summaries/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetTransactionsRequest generates requests for GetTransactions
+func NewGetTransactionsRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/transactions")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateTransactionRequest calls the generic CreateTransaction builder with application/json body
+func NewCreateTransactionRequest(server string, body CreateTransactionJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateTransactionRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateTransactionRequestWithBody generates requests for CreateTransaction with any type of body
+func NewCreateTransactionRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/transactions")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteTransactionByIdRequest generates requests for DeleteTransactionById
+func NewDeleteTransactionByIdRequest(server string, id int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/transactions/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetTransactionByIdRequest generates requests for GetTransactionById
+func NewGetTransactionByIdRequest(server string, id int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/transactions/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateTransactionByIdRequest calls the generic UpdateTransactionById builder with application/json body
+func NewUpdateTransactionByIdRequest(server string, id int, body UpdateTransactionByIdJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateTransactionByIdRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewUpdateTransactionByIdRequestWithBody generates requests for UpdateTransactionById with any type of body
+func NewUpdateTransactionByIdRequestWithBody(server string, id int, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/transactions/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewDeleteCurrentUserRequest generates requests for DeleteCurrentUser
 func NewDeleteCurrentUserRequest(server string) (*http.Request, error) {
 	var err error
@@ -574,6 +1585,63 @@ type ClientWithResponsesInterface interface {
 
 	CreateUserWithResponse(ctx context.Context, body CreateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateUserResponse, error)
 
+	// GetCategoriesWithResponse request
+	GetCategoriesWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetCategoriesResponse, error)
+
+	// CreateCategoryWithBodyWithResponse request with any body
+	CreateCategoryWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error)
+
+	CreateCategoryWithResponse(ctx context.Context, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error)
+
+	// DeleteCategoryByIdWithResponse request
+	DeleteCategoryByIdWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*DeleteCategoryByIdResponse, error)
+
+	// GetCategoryByIdWithResponse request
+	GetCategoryByIdWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*GetCategoryByIdResponse, error)
+
+	// UpdateCategoryByIdWithBodyWithResponse request with any body
+	UpdateCategoryByIdWithBodyWithResponse(ctx context.Context, id int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateCategoryByIdResponse, error)
+
+	UpdateCategoryByIdWithResponse(ctx context.Context, id int, body UpdateCategoryByIdJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateCategoryByIdResponse, error)
+
+	// GetMonthlySummariesWithResponse request
+	GetMonthlySummariesWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetMonthlySummariesResponse, error)
+
+	// CreateMonthlySummaryWithBodyWithResponse request with any body
+	CreateMonthlySummaryWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateMonthlySummaryResponse, error)
+
+	CreateMonthlySummaryWithResponse(ctx context.Context, body CreateMonthlySummaryJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateMonthlySummaryResponse, error)
+
+	// DeleteMonthlySummaryByIdWithResponse request
+	DeleteMonthlySummaryByIdWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*DeleteMonthlySummaryByIdResponse, error)
+
+	// GetMonthlySummaryByIdWithResponse request
+	GetMonthlySummaryByIdWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*GetMonthlySummaryByIdResponse, error)
+
+	// UpdateMonthlySummaryByIdWithBodyWithResponse request with any body
+	UpdateMonthlySummaryByIdWithBodyWithResponse(ctx context.Context, id int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateMonthlySummaryByIdResponse, error)
+
+	UpdateMonthlySummaryByIdWithResponse(ctx context.Context, id int, body UpdateMonthlySummaryByIdJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateMonthlySummaryByIdResponse, error)
+
+	// GetTransactionsWithResponse request
+	GetTransactionsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTransactionsResponse, error)
+
+	// CreateTransactionWithBodyWithResponse request with any body
+	CreateTransactionWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTransactionResponse, error)
+
+	CreateTransactionWithResponse(ctx context.Context, body CreateTransactionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTransactionResponse, error)
+
+	// DeleteTransactionByIdWithResponse request
+	DeleteTransactionByIdWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*DeleteTransactionByIdResponse, error)
+
+	// GetTransactionByIdWithResponse request
+	GetTransactionByIdWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*GetTransactionByIdResponse, error)
+
+	// UpdateTransactionByIdWithBodyWithResponse request with any body
+	UpdateTransactionByIdWithBodyWithResponse(ctx context.Context, id int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateTransactionByIdResponse, error)
+
+	UpdateTransactionByIdWithResponse(ctx context.Context, id int, body UpdateTransactionByIdJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateTransactionByIdResponse, error)
+
 	// DeleteCurrentUserWithResponse request
 	DeleteCurrentUserWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*DeleteCurrentUserResponse, error)
 
@@ -677,6 +1745,357 @@ func (r CreateUserResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r CreateUserResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetCategoriesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *CategoryResponse
+	JSON400      *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetCategoriesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetCategoriesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateCategoryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *CategoryResponse
+	JSON400      *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateCategoryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateCategoryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteCategoryByIdResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON400      *ErrorResponse
+	JSON404      *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteCategoryByIdResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteCategoryByIdResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetCategoryByIdResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *CategoryResponse
+	JSON400      *ErrorResponse
+	JSON404      *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetCategoryByIdResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetCategoryByIdResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateCategoryByIdResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *CategoryResponse
+	JSON400      *ErrorResponse
+	JSON404      *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateCategoryByIdResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateCategoryByIdResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetMonthlySummariesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *MonthlySummaryResponse
+	JSON400      *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetMonthlySummariesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetMonthlySummariesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateMonthlySummaryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *MonthlySummaryResponse
+	JSON400      *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateMonthlySummaryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateMonthlySummaryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteMonthlySummaryByIdResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON400      *ErrorResponse
+	JSON404      *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteMonthlySummaryByIdResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteMonthlySummaryByIdResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetMonthlySummaryByIdResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *MonthlySummaryResponse
+	JSON400      *ErrorResponse
+	JSON404      *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetMonthlySummaryByIdResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetMonthlySummaryByIdResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateMonthlySummaryByIdResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *MonthlySummaryResponse
+	JSON400      *ErrorResponse
+	JSON404      *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateMonthlySummaryByIdResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateMonthlySummaryByIdResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetTransactionsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TransactionResponse
+	JSON400      *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTransactionsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTransactionsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateTransactionResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *TransactionResponse
+	JSON400      *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateTransactionResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateTransactionResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteTransactionByIdResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON400      *ErrorResponse
+	JSON404      *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteTransactionByIdResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteTransactionByIdResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetTransactionByIdResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TransactionResponse
+	JSON400      *ErrorResponse
+	JSON404      *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTransactionByIdResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTransactionByIdResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateTransactionByIdResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TransactionResponse
+	JSON400      *ErrorResponse
+	JSON404      *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateTransactionByIdResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateTransactionByIdResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -804,6 +2223,189 @@ func (c *ClientWithResponses) CreateUserWithResponse(ctx context.Context, body C
 		return nil, err
 	}
 	return ParseCreateUserResponse(rsp)
+}
+
+// GetCategoriesWithResponse request returning *GetCategoriesResponse
+func (c *ClientWithResponses) GetCategoriesWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetCategoriesResponse, error) {
+	rsp, err := c.GetCategories(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetCategoriesResponse(rsp)
+}
+
+// CreateCategoryWithBodyWithResponse request with arbitrary body returning *CreateCategoryResponse
+func (c *ClientWithResponses) CreateCategoryWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error) {
+	rsp, err := c.CreateCategoryWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateCategoryResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateCategoryWithResponse(ctx context.Context, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error) {
+	rsp, err := c.CreateCategory(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateCategoryResponse(rsp)
+}
+
+// DeleteCategoryByIdWithResponse request returning *DeleteCategoryByIdResponse
+func (c *ClientWithResponses) DeleteCategoryByIdWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*DeleteCategoryByIdResponse, error) {
+	rsp, err := c.DeleteCategoryById(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteCategoryByIdResponse(rsp)
+}
+
+// GetCategoryByIdWithResponse request returning *GetCategoryByIdResponse
+func (c *ClientWithResponses) GetCategoryByIdWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*GetCategoryByIdResponse, error) {
+	rsp, err := c.GetCategoryById(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetCategoryByIdResponse(rsp)
+}
+
+// UpdateCategoryByIdWithBodyWithResponse request with arbitrary body returning *UpdateCategoryByIdResponse
+func (c *ClientWithResponses) UpdateCategoryByIdWithBodyWithResponse(ctx context.Context, id int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateCategoryByIdResponse, error) {
+	rsp, err := c.UpdateCategoryByIdWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateCategoryByIdResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateCategoryByIdWithResponse(ctx context.Context, id int, body UpdateCategoryByIdJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateCategoryByIdResponse, error) {
+	rsp, err := c.UpdateCategoryById(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateCategoryByIdResponse(rsp)
+}
+
+// GetMonthlySummariesWithResponse request returning *GetMonthlySummariesResponse
+func (c *ClientWithResponses) GetMonthlySummariesWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetMonthlySummariesResponse, error) {
+	rsp, err := c.GetMonthlySummaries(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetMonthlySummariesResponse(rsp)
+}
+
+// CreateMonthlySummaryWithBodyWithResponse request with arbitrary body returning *CreateMonthlySummaryResponse
+func (c *ClientWithResponses) CreateMonthlySummaryWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateMonthlySummaryResponse, error) {
+	rsp, err := c.CreateMonthlySummaryWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateMonthlySummaryResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateMonthlySummaryWithResponse(ctx context.Context, body CreateMonthlySummaryJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateMonthlySummaryResponse, error) {
+	rsp, err := c.CreateMonthlySummary(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateMonthlySummaryResponse(rsp)
+}
+
+// DeleteMonthlySummaryByIdWithResponse request returning *DeleteMonthlySummaryByIdResponse
+func (c *ClientWithResponses) DeleteMonthlySummaryByIdWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*DeleteMonthlySummaryByIdResponse, error) {
+	rsp, err := c.DeleteMonthlySummaryById(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteMonthlySummaryByIdResponse(rsp)
+}
+
+// GetMonthlySummaryByIdWithResponse request returning *GetMonthlySummaryByIdResponse
+func (c *ClientWithResponses) GetMonthlySummaryByIdWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*GetMonthlySummaryByIdResponse, error) {
+	rsp, err := c.GetMonthlySummaryById(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetMonthlySummaryByIdResponse(rsp)
+}
+
+// UpdateMonthlySummaryByIdWithBodyWithResponse request with arbitrary body returning *UpdateMonthlySummaryByIdResponse
+func (c *ClientWithResponses) UpdateMonthlySummaryByIdWithBodyWithResponse(ctx context.Context, id int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateMonthlySummaryByIdResponse, error) {
+	rsp, err := c.UpdateMonthlySummaryByIdWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateMonthlySummaryByIdResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateMonthlySummaryByIdWithResponse(ctx context.Context, id int, body UpdateMonthlySummaryByIdJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateMonthlySummaryByIdResponse, error) {
+	rsp, err := c.UpdateMonthlySummaryById(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateMonthlySummaryByIdResponse(rsp)
+}
+
+// GetTransactionsWithResponse request returning *GetTransactionsResponse
+func (c *ClientWithResponses) GetTransactionsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTransactionsResponse, error) {
+	rsp, err := c.GetTransactions(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTransactionsResponse(rsp)
+}
+
+// CreateTransactionWithBodyWithResponse request with arbitrary body returning *CreateTransactionResponse
+func (c *ClientWithResponses) CreateTransactionWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTransactionResponse, error) {
+	rsp, err := c.CreateTransactionWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateTransactionResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateTransactionWithResponse(ctx context.Context, body CreateTransactionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTransactionResponse, error) {
+	rsp, err := c.CreateTransaction(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateTransactionResponse(rsp)
+}
+
+// DeleteTransactionByIdWithResponse request returning *DeleteTransactionByIdResponse
+func (c *ClientWithResponses) DeleteTransactionByIdWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*DeleteTransactionByIdResponse, error) {
+	rsp, err := c.DeleteTransactionById(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteTransactionByIdResponse(rsp)
+}
+
+// GetTransactionByIdWithResponse request returning *GetTransactionByIdResponse
+func (c *ClientWithResponses) GetTransactionByIdWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*GetTransactionByIdResponse, error) {
+	rsp, err := c.GetTransactionById(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTransactionByIdResponse(rsp)
+}
+
+// UpdateTransactionByIdWithBodyWithResponse request with arbitrary body returning *UpdateTransactionByIdResponse
+func (c *ClientWithResponses) UpdateTransactionByIdWithBodyWithResponse(ctx context.Context, id int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateTransactionByIdResponse, error) {
+	rsp, err := c.UpdateTransactionByIdWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateTransactionByIdResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateTransactionByIdWithResponse(ctx context.Context, id int, body UpdateTransactionByIdJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateTransactionByIdResponse, error) {
+	rsp, err := c.UpdateTransactionById(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateTransactionByIdResponse(rsp)
 }
 
 // DeleteCurrentUserWithResponse request returning *DeleteCurrentUserResponse
@@ -966,6 +2568,543 @@ func ParseCreateUserResponse(rsp *http.Response) (*CreateUserResponse, error) {
 	return response, nil
 }
 
+// ParseGetCategoriesResponse parses an HTTP response from a GetCategoriesWithResponse call
+func ParseGetCategoriesResponse(rsp *http.Response) (*GetCategoriesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetCategoriesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest CategoryResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateCategoryResponse parses an HTTP response from a CreateCategoryWithResponse call
+func ParseCreateCategoryResponse(rsp *http.Response) (*CreateCategoryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateCategoryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest CategoryResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteCategoryByIdResponse parses an HTTP response from a DeleteCategoryByIdWithResponse call
+func ParseDeleteCategoryByIdResponse(rsp *http.Response) (*DeleteCategoryByIdResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteCategoryByIdResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetCategoryByIdResponse parses an HTTP response from a GetCategoryByIdWithResponse call
+func ParseGetCategoryByIdResponse(rsp *http.Response) (*GetCategoryByIdResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetCategoryByIdResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest CategoryResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateCategoryByIdResponse parses an HTTP response from a UpdateCategoryByIdWithResponse call
+func ParseUpdateCategoryByIdResponse(rsp *http.Response) (*UpdateCategoryByIdResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateCategoryByIdResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest CategoryResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetMonthlySummariesResponse parses an HTTP response from a GetMonthlySummariesWithResponse call
+func ParseGetMonthlySummariesResponse(rsp *http.Response) (*GetMonthlySummariesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetMonthlySummariesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest MonthlySummaryResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateMonthlySummaryResponse parses an HTTP response from a CreateMonthlySummaryWithResponse call
+func ParseCreateMonthlySummaryResponse(rsp *http.Response) (*CreateMonthlySummaryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateMonthlySummaryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest MonthlySummaryResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteMonthlySummaryByIdResponse parses an HTTP response from a DeleteMonthlySummaryByIdWithResponse call
+func ParseDeleteMonthlySummaryByIdResponse(rsp *http.Response) (*DeleteMonthlySummaryByIdResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteMonthlySummaryByIdResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetMonthlySummaryByIdResponse parses an HTTP response from a GetMonthlySummaryByIdWithResponse call
+func ParseGetMonthlySummaryByIdResponse(rsp *http.Response) (*GetMonthlySummaryByIdResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetMonthlySummaryByIdResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest MonthlySummaryResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateMonthlySummaryByIdResponse parses an HTTP response from a UpdateMonthlySummaryByIdWithResponse call
+func ParseUpdateMonthlySummaryByIdResponse(rsp *http.Response) (*UpdateMonthlySummaryByIdResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateMonthlySummaryByIdResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest MonthlySummaryResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetTransactionsResponse parses an HTTP response from a GetTransactionsWithResponse call
+func ParseGetTransactionsResponse(rsp *http.Response) (*GetTransactionsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTransactionsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest TransactionResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateTransactionResponse parses an HTTP response from a CreateTransactionWithResponse call
+func ParseCreateTransactionResponse(rsp *http.Response) (*CreateTransactionResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateTransactionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest TransactionResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteTransactionByIdResponse parses an HTTP response from a DeleteTransactionByIdWithResponse call
+func ParseDeleteTransactionByIdResponse(rsp *http.Response) (*DeleteTransactionByIdResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteTransactionByIdResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetTransactionByIdResponse parses an HTTP response from a GetTransactionByIdWithResponse call
+func ParseGetTransactionByIdResponse(rsp *http.Response) (*GetTransactionByIdResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTransactionByIdResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest TransactionResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateTransactionByIdResponse parses an HTTP response from a UpdateTransactionByIdWithResponse call
+func ParseUpdateTransactionByIdResponse(rsp *http.Response) (*UpdateTransactionByIdResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateTransactionByIdResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest TransactionResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseDeleteCurrentUserResponse parses an HTTP response from a DeleteCurrentUserWithResponse call
 func ParseDeleteCurrentUserResponse(rsp *http.Response) (*DeleteCurrentUserResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -1093,6 +3232,51 @@ type ServerInterface interface {
 	// Create a new user
 	// (POST /auth/signup)
 	CreateUser(ctx echo.Context) error
+	// Get all categories
+	// (GET /categories)
+	GetCategories(ctx echo.Context) error
+	// Create a new category
+	// (POST /categories)
+	CreateCategory(ctx echo.Context) error
+	// Delete a category
+	// (DELETE /categories/{id})
+	DeleteCategoryById(ctx echo.Context, id int) error
+	// Get a category by ID
+	// (GET /categories/{id})
+	GetCategoryById(ctx echo.Context, id int) error
+	// Update a category
+	// (PATCH /categories/{id})
+	UpdateCategoryById(ctx echo.Context, id int) error
+	// Get all monthly summaries for the current user
+	// (GET /monthly-summaries)
+	GetMonthlySummaries(ctx echo.Context) error
+	// Create a new monthly summary
+	// (POST /monthly-summaries)
+	CreateMonthlySummary(ctx echo.Context) error
+	// Delete a monthly summary by ID
+	// (DELETE /monthly-summaries/{id})
+	DeleteMonthlySummaryById(ctx echo.Context, id int) error
+	// Get a monthly summary by ID
+	// (GET /monthly-summaries/{id})
+	GetMonthlySummaryById(ctx echo.Context, id int) error
+	// Update a monthly summary by ID
+	// (PATCH /monthly-summaries/{id})
+	UpdateMonthlySummaryById(ctx echo.Context, id int) error
+	// Get all transactions for the current user
+	// (GET /transactions)
+	GetTransactions(ctx echo.Context) error
+	// Create a new transaction
+	// (POST /transactions)
+	CreateTransaction(ctx echo.Context) error
+	// Delete a transaction
+	// (DELETE /transactions/{id})
+	DeleteTransactionById(ctx echo.Context, id int) error
+	// Get a transaction by ID
+	// (GET /transactions/{id})
+	GetTransactionById(ctx echo.Context, id int) error
+	// Update a transaction
+	// (PATCH /transactions/{id})
+	UpdateTransactionById(ctx echo.Context, id int) error
 	// Delete the current user
 	// (DELETE /users)
 	DeleteCurrentUser(ctx echo.Context) error
@@ -1146,6 +3330,234 @@ func (w *ServerInterfaceWrapper) CreateUser(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.CreateUser(ctx)
+	return err
+}
+
+// GetCategories converts echo context to params.
+func (w *ServerInterfaceWrapper) GetCategories(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(CsrfAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetCategories(ctx)
+	return err
+}
+
+// CreateCategory converts echo context to params.
+func (w *ServerInterfaceWrapper) CreateCategory(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(CsrfAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.CreateCategory(ctx)
+	return err
+}
+
+// DeleteCategoryById converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteCategoryById(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(CsrfAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.DeleteCategoryById(ctx, id)
+	return err
+}
+
+// GetCategoryById converts echo context to params.
+func (w *ServerInterfaceWrapper) GetCategoryById(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(CsrfAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetCategoryById(ctx, id)
+	return err
+}
+
+// UpdateCategoryById converts echo context to params.
+func (w *ServerInterfaceWrapper) UpdateCategoryById(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(CsrfAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.UpdateCategoryById(ctx, id)
+	return err
+}
+
+// GetMonthlySummaries converts echo context to params.
+func (w *ServerInterfaceWrapper) GetMonthlySummaries(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(CsrfAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetMonthlySummaries(ctx)
+	return err
+}
+
+// CreateMonthlySummary converts echo context to params.
+func (w *ServerInterfaceWrapper) CreateMonthlySummary(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(CsrfAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.CreateMonthlySummary(ctx)
+	return err
+}
+
+// DeleteMonthlySummaryById converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteMonthlySummaryById(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(CsrfAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.DeleteMonthlySummaryById(ctx, id)
+	return err
+}
+
+// GetMonthlySummaryById converts echo context to params.
+func (w *ServerInterfaceWrapper) GetMonthlySummaryById(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(CsrfAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetMonthlySummaryById(ctx, id)
+	return err
+}
+
+// UpdateMonthlySummaryById converts echo context to params.
+func (w *ServerInterfaceWrapper) UpdateMonthlySummaryById(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(CsrfAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.UpdateMonthlySummaryById(ctx, id)
+	return err
+}
+
+// GetTransactions converts echo context to params.
+func (w *ServerInterfaceWrapper) GetTransactions(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(CsrfAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetTransactions(ctx)
+	return err
+}
+
+// CreateTransaction converts echo context to params.
+func (w *ServerInterfaceWrapper) CreateTransaction(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(CsrfAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.CreateTransaction(ctx)
+	return err
+}
+
+// DeleteTransactionById converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteTransactionById(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(CsrfAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.DeleteTransactionById(ctx, id)
+	return err
+}
+
+// GetTransactionById converts echo context to params.
+func (w *ServerInterfaceWrapper) GetTransactionById(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(CsrfAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetTransactionById(ctx, id)
+	return err
+}
+
+// UpdateTransactionById converts echo context to params.
+func (w *ServerInterfaceWrapper) UpdateTransactionById(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(CsrfAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.UpdateTransactionById(ctx, id)
 	return err
 }
 
@@ -1214,6 +3626,21 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/auth/login", wrapper.LoginUser)
 	router.POST(baseURL+"/auth/logout", wrapper.LogoutUser)
 	router.POST(baseURL+"/auth/signup", wrapper.CreateUser)
+	router.GET(baseURL+"/categories", wrapper.GetCategories)
+	router.POST(baseURL+"/categories", wrapper.CreateCategory)
+	router.DELETE(baseURL+"/categories/:id", wrapper.DeleteCategoryById)
+	router.GET(baseURL+"/categories/:id", wrapper.GetCategoryById)
+	router.PATCH(baseURL+"/categories/:id", wrapper.UpdateCategoryById)
+	router.GET(baseURL+"/monthly-summaries", wrapper.GetMonthlySummaries)
+	router.POST(baseURL+"/monthly-summaries", wrapper.CreateMonthlySummary)
+	router.DELETE(baseURL+"/monthly-summaries/:id", wrapper.DeleteMonthlySummaryById)
+	router.GET(baseURL+"/monthly-summaries/:id", wrapper.GetMonthlySummaryById)
+	router.PATCH(baseURL+"/monthly-summaries/:id", wrapper.UpdateMonthlySummaryById)
+	router.GET(baseURL+"/transactions", wrapper.GetTransactions)
+	router.POST(baseURL+"/transactions", wrapper.CreateTransaction)
+	router.DELETE(baseURL+"/transactions/:id", wrapper.DeleteTransactionById)
+	router.GET(baseURL+"/transactions/:id", wrapper.GetTransactionById)
+	router.PATCH(baseURL+"/transactions/:id", wrapper.UpdateTransactionById)
 	router.DELETE(baseURL+"/users", wrapper.DeleteCurrentUser)
 	router.GET(baseURL+"/users", wrapper.GetCurrentUser)
 	router.PATCH(baseURL+"/users", wrapper.UpdateCurrentUser)
@@ -1223,21 +3650,33 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/9xX72/bNhD9VwhuwL4wltwGWKFvndcNXbsfiF1sgGEMnHSW2EgkS1IOjED/+3CkkkiW",
-	"lShZHGBFvijkkffeu3ckfU1TVWklQTpLk2tq4EsN1v2gMgF+4JMFszDAHVyEKRxMlXQg/SfXuhQpd0LJ",
-	"6LNVEsdsWkDF8etbA1ua0G+iuyxRmLXRcOemaRrmM37S2Yky9nduQkoDVitpA+N3xihz0Y48Krc2SoNx",
-	"rXIVWMtzv4Pba6AJtc4ImdOQ8UstDGQ0Wd8GbthNoPrnM6QeHaMZ2NQIjSlpEsCRG7y0lesZ0ELFRXkE",
-	"K6Mi6wwL6SAHg+OSVxPIiYy2oazNMYUmkuqwbFiLe9ySI2y2ylTc0aQdYUN6IzQY1dzaK2Wyhzn26HUW",
-	"DpmOuPv/AR6rAGlthNsvsRoB7cKa7dvaFfgtsHYF8AzMTdUT+tfZYnnx09nq9w/vfrvjwLX4APtQeyG3",
-	"ygMVrsS5FbeX5FcueQ4VSEfe/vGeMroDY4M75rN4FiNLpUFyLWhCX8/i2WsP3xUeVsRrV0SpNVv8Lwev",
-	"M6rs2+F9RhP6MzgEv1KXIOnBIfAqjv9DM2Hav53f90H9EWcbO6UzUEviw4kBZwTsIAulqauKm33gRTi5",
-	"C/TTQY9S5cJj0soeUeQjTqNDKevcBPvnOFYe9vJ0y07xam+JMzU0L1dh9viznz3WB75UxNZpCtZua5Qj",
-	"NJ6HtwR3tlDqUngI/ZVLsNhHRBnyy58r0oaxDtVDyJj9PJ6PXa+3skb9q7Pvyo8qJ0ISTmr0V8+Sqnb3",
-	"elLV7taUz1bBk1zPAWy3LN1Tkybr7nm53jSbQ4Vw9UAiK3JZ63GJwmV4vG+PF6zzyDv2DhsIPaH2vXeI",
-	"N0z8JMNM0yoAJpxIuOrIhV82WL4EB0OpfvTji9oYkCOmOh+2jH+OhC2zp3LDVecnVCQwI64AkgZ6QRdG",
-	"Hc8tGjmIs2nY+HV4ny7xy3jg1Drh7Xgo0neW4BsEbygs+DHJNHdpMRQtPOUOdXtCBx78Lvla1Q80p7g0",
-	"bGp2vqHX17Q2JT4undNJFMUz/5e8id/EEdci2s1pww6CSpXyslDW3R82f/W9323eD9s0/wYAAP//m7bZ",
-	"uxwPAAA=",
+	"H4sIAAAAAAAC/+Ra32/bNhD+VwRuwF6U2GkLrNBbm3ZD1nYbmhQbEAQFI51tthKpklQ6I9D/PpCULFG/",
+	"rchKvKEvqUTyvvvueN+J9D3yWRQzClQK5N0jDt8SEPI1CwjoB+dYwprx7TkHLOHj7vVWvfQZlUCl+hPH",
+	"cUh8LAmjiy+CUfVM+BuIsPrrRw4r5KEfFoW1hXkrFo0WUJqmqbuz/ikODmzdspBZ/8Co3ITbyySK8CEZ",
+	"6LDTiORwbHTYyZBccUwF9tXahyOkzUgdw+GoaDOSYfgkgB+OgNrqJauHc7m2uraauoiDiBkVdkX4mD2c",
+	"fCuWjLsoAOFzEqvlkLez7eSIUOqit5wzPgpNzFkMXGalLgIh8FqvILcxIA8JyQldI0PBt4RwCJB3vRt4",
+	"4+YD2e0X8BsRa3AWXHuPTc5idflWLrOBjjAjLYyl5J8coLV2K7rSKAuZytHJIZlFW7Go1yUQqZst2y6Q",
+	"9eSiOGrKrDyD7hHQJFLJRajPIkAugn9iUPaKLCsmJQL4ZxKUFiRUwhp4LVe13WyFYl49c11U3X41F5rt",
+	"uZO6VkFPAuRaLnQBt0vXQSPQQXITwi6Br+G8xSGmvka0YjzCEnloFTIs0W5lmkS3hvsc4qDBmWODxnZk",
+	"mIu2gPnnSDnVXyzzhaxZbp1kd+d4P4OPwV0LFftwug9tEzPWszeeRs7txU87G9ZCTdS0tpc1XnDEEiMu",
+	"/ej9rAy17pqSVNVqkIqOZUY/eFDlLzZeGZmbr5y51sPPETHTtvhwxjQ9k9DWs93+n2lV/6ipEQMRJqEF",
+	"2DxpQNwq5zEW4jvjQX8NyWQ7N7Gb2AZ+Cth7NlEd/ZAx0Ya1JwOfKtGqtwY/4URuL1WPnX1yCr56lRhZ",
+	"IKoj3wAOgOdceOjvk/PLj7+cXP3x7u3vhQ84Ju9gazp6QldMAyUyVO+usPjqfMAUryECKp1Xf14gF90B",
+	"F6bnPztdni6VlywGimOCPPT8dHn6XMOXGw1rgRO5WfiCr9T/1qB5Vizrb5CLAHnoV5AK/BX7ChRVPqSf",
+	"LZcP+FpVZj9LvW4v/wpnNnbIN6vi0tHDHQ6SE7iDwITGNBPGLwc7xUD92vARsjXRmGImGhh5r16rDEVu",
+	"6bRx+wAm9sjl4Sk7JFetKZInkM4XYXf/4wp33zzQoXJE4vsgxCpRdJiNp+Fdgjw5Z+wr0RDsmZcg1D5y",
+	"GHd+++vKyYa5JVerkJX1F8uzti/1Ha0L+7THzsr3bO0Q6mBHiZSdkiyRnTnJErlLyskieJATJQO2HJZy",
+	"1UTedbleXt+kN1WG1OwaRYKsaRK3U2SEu3nfNgesdJGwaD4trW+XAfG3DoB00ixHJc0wvgxoBzsUvpco",
+	"y1qfLMytlb8Y1ZxW3aBrB60H91ZX9TB0Su6potmREDnGMUnRfrU0KjHmp8tKjrwbribI4p4EqamQIZhu",
+	"3CbyjX6eo3+9vQi07HAcgdSl9jprelTfUbQ8uhW05aehvhZd/E2N0xf1ur07Xzdgg7EcqlkvDsi84czB",
+	"BesuknityEKl5L1J3b7NOSfhM+75QwfA9H85+87t1rl40x6DGEt/U4+C+UaZJxAja1P9si39L4fVuDtg",
+	"X6kaF5kTxhMzvUcLrePIsYrYcnU2my5G1pUZAeGsGHfkBhw/4Vx9RiamQco5q00w26FDUG0Xx8hq368W",
+	"RonrYzFvSazN5raH58YUHajGtruPq8nVe9pjkeZKtGoa0bw3BtWPJyba026OeaR7XHQ6hXzOED2oJk4k",
+	"6scV9p20j4m8qqWyuN7oVPqr8rgxvDb9+GQ2iS972afuFiN9wl7yaoyqd/7ubpSkPwrNlp5Li5IWVqup",
+	"N1DBS949rnyXf8h0LNI9KDDukArwtIR6wpSfR6VLlNfqdL36dInzbDEZX9cmkuUjCvJOkwdXQqVAYsBp",
+	"ohGs5huNhiKlf+F4HNWpQ48NOZ2Hfl28LOe5fJijclRJ+kk4hJrrUTvFCsq6z+gqvI24/plodx9DBLJt",
+	"PSBTzaL8Li/CCQ+RhzZSxt5isTzV/7yXy5fLBY7J4u4MpW5lUMh8HG6YkN3Dzp79rFc7s4fdpP8GAAD/",
+	"/5rsTV4BNAAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

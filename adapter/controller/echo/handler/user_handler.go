@@ -7,6 +7,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
+	"github.com/oapi-codegen/runtime/types"
 
 	"household-account-backend/adapter/controller/echo/presenter"
 	"household-account-backend/entity"
@@ -27,7 +28,7 @@ func NewUserHandler(userUseCase usecase.UserUseCase) *UserHandler {
 func userToResponse(user *entity.User) *presenter.UserResponse {
 	return &presenter.UserResponse{
 		Id:        user.ID,
-		Email:     user.Email,
+		Email:     types.Email(user.Email),
 		Name:      user.Name,
 	}
 }
@@ -73,7 +74,7 @@ func (u *UserHandler) Login(c echo.Context) error {
 	cookie.Expires = time.Now().Add(24 * time.Hour)
 	cookie.Path = "/"
 	cookie.Domain = os.Getenv("API_DOMAIN")
-	cookie.Secure = true
+	// cookie.Secure = true
 	cookie.HttpOnly = true
 	cookie.SameSite = http.SameSiteNoneMode
 	c.SetCookie(cookie)
@@ -89,7 +90,7 @@ func (u *UserHandler) Logout(c echo.Context) error {
 	cookie.Expires = time.Now().Add(-1 * time.Hour)
 	cookie.Path = "/"
 	cookie.Domain = os.Getenv("API_DOMAIN")
-	cookie.Secure = true
+	// cookie.Secure = trueas
 	cookie.HttpOnly = true
 	cookie.SameSite = http.SameSiteNoneMode
 	c.SetCookie(cookie)

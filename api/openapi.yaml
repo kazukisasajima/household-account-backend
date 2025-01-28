@@ -28,7 +28,7 @@ paths:
       summary: Update the current user
       operationId: updateCurrentUser
       requestBody:
-        $ref: "#/components/requestBodies/UserUpdateRequest"
+        $ref: "#/components/requestBodies/UserUpdateRequestBody"
         required: true
       responses:
         "200":
@@ -59,7 +59,7 @@ paths:
       summary: Create a new user
       operationId: createUser
       requestBody:
-        $ref: "#/components/requestBodies/UserCreateRequest"
+        $ref: "#/components/requestBodies/UserCreateRequestBody"
         required: true
       responses:
         "201":
@@ -143,161 +143,295 @@ paths:
                     type: string
                 required:
                   - auth_token
-  # /categories:
-  #   get:
-  #     summary: Get all categories
-  #     operationId: getCategories
-  #     responses:
-  #       "200":
-  #         description: Categories retrieved
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: array
-  #               items:
-  #                 type: object
-  #                 properties:
-  #                   id:
-  #                     type: integer
-  #                   name:
-  #                     type: string
-  #                 required:
-  #                   - id
-  #                   - name
-  #       "400":
-  #         $ref: "#/components/responses/ErrorResponse"
-  #   post:
-  #     summary: Create a new category
-  #     operationId: createCategory
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             type: object
-  #             properties:
-  #               name:
-  #                 type: string
-  #             required:
-  #               - name
-  #     responses:
-  #       "201":
-  #         description: Category created
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               properties:
-  #                 id:
-  #                   type: integer
-  #                 name:
-  #                   type: string
-  #               required:
-  #                 - id
-  #                 - name
-  #       "400":
-  #         $ref: "#/components/responses/ErrorResponse"
-  # /categories/{id}:
-  #   get:
-  #     tags:
-  #       - categories
-  #     summary: Get a category by ID
-  #     operationId: getCategoryById
-  #     parameters:
-  #       - name: id
-  #         in: path
-  #         required: true
-  #         schema:
-  #           type: integer
-  #     responses:
-  #       "200":
-  #         description: Category retrieved
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               properties:
-  #                 id:
-  #                   type: integer
-  #                 name:
-  #                   type: string
-  #               required:
-  #                 - id
-  #                 - name
-  #       "400":
-  #         $ref: "#/components/responses/ErrorResponse"
-  #       "404":
-  #         $ref: "#/components/responses/ErrorResponse"
-  #     security:
-  #       - CsrfAuth: []  # 認証が必須
-  #   patch:
-  #     tags:
-  #       - categories
-  #     summary: Update a category by ID
-  #     operationId: updateCategoryById
-  #     parameters:
-  #       - name: id
-  #         in: path
-  #         required: true
-  #         schema:
-  #           type: integer
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             type: object
-  #             properties:
-  #               name:
-  #                 type: string
-  #             required:
-  #               - name
-  #     responses:
-  #       "200":
-  #         description: Category updated
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               properties:
-  #                 id:
-  #                   type: integer
-  #                 name:
-  #                   type: string
-  #               required:
-  #                 - id
-  #                 - name
-  #       "400":
-  #         $ref: "#/components/responses/ErrorResponse"
-  #       "404":
-  #         $ref: "#/components/responses/ErrorResponse"
-  #     security:
-  #       - CsrfAuth: []  # 認証が必須
-  #   delete:
-  #     tags:
-  #       - categories
-  #     summary: Delete a category by ID
-  #     operationId: deleteCategoryById
-  #     parameters:
-  #       - name: id
-  #         in: path
-  #         required: true
-  #         schema:
-  #           type: integer
-  #     responses:
-  #       "204":
-  #         description: Category deleted
-  #       "400":
-  #         $ref: "#/components/responses/ErrorResponse"
-  #       "404":
-  #         $ref: "#/components/responses/ErrorResponse"
-  #     security:
-  #       - CsrfAuth: []  # 認証が必須    
+  /categories:
+    get:
+      summary: Get all categories
+      operationId: getCategories
+      responses:
+        "200":
+          $ref: "#/components/responses/CategoryResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []
+    post:
+      summary: Create a new category
+      operationId: createCategory
+      requestBody:
+        $ref: "#/components/requestBodies/CategoryCreateRequestBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/CategoryResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []
+  /categories/{id}:
+    get:
+      tags:
+        - categories
+      summary: Get a category by ID
+      operationId: getCategoryById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/CategoryResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []
+    patch:
+      tags:
+        - categories
+      summary: Update a category
+      operationId: updateCategoryById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/CategoryUpdateRequestBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/CategoryResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []
+    delete:
+      tags:
+        - categories
+      summary: Delete a category
+      operationId: deleteCategoryById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Category deleted
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []
+  /transactions:
+    get:
+      tags:
+        - transactions
+      summary: Get all transactions for the current user
+      operationId: getTransactions
+      responses:
+        "200":
+          $ref: "#/components/responses/TransactionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []
+    post:
+      tags:
+        - transactions
+      summary: Create a new transaction
+      operationId: createTransaction
+      requestBody:
+        $ref: "#/components/requestBodies/TransactionCreateRequestBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/TransactionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []
+  /transactions/{id}:
+    get:
+      tags:
+        - transactions
+      summary: Get a transaction by ID
+      operationId: getTransactionById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/TransactionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []
+    patch:
+      tags:
+        - transactions
+      summary: Update a transaction
+      operationId: updateTransactionById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/TransactionUpdateRequestBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/TransactionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []
+    delete:
+      tags:
+        - transactions
+      summary: Delete a transaction
+      operationId: deleteTransactionById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Transaction deleted
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []
+
+  /monthly-summaries:
+    get:
+      tags:
+        - monthly summaries
+      summary: Get all monthly summaries for the current user
+      operationId: getMonthlySummaries
+      responses:
+        "200":
+          $ref: "#/components/responses/MonthlySummaryResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []
+    post:
+      tags:
+        - monthly summaries
+      summary: Create a new monthly summary
+      operationId: createMonthlySummary
+      requestBody:
+        $ref: "#/components/requestBodies/MonthlySummaryCreateRequestBody"
+      responses:
+        "201":
+          $ref: "#/components/responses/MonthlySummaryResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []
+  /monthly-summaries/{id}:
+    get:
+      tags:
+        - monthly summaries
+      summary: Get a monthly summary by ID
+      operationId: getMonthlySummaryById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/MonthlySummaryResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []
+    patch:
+      tags:
+        - monthly summaries
+      summary: Update a monthly summary by ID
+      operationId: updateMonthlySummaryById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/MonthlySummaryUpdateRequestBody"
+      responses:
+        "200":
+          $ref: "#/components/responses/MonthlySummaryResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []
+    delete:
+      tags:
+        - monthly summaries
+      summary: Delete a monthly summary by ID
+      operationId: deleteMonthlySummaryById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Monthly summary deleted
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+        - CsrfAuth: []
+
 components:
   securitySchemes:
     CsrfAuth:
       type: apiKey
       in: header
       name: X-CSRF-TOKEN  # カスタムヘッダー名を指定
-  schemas:      
+  schemas:
+    UserRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+        - id
+        - name
+        - email  
     UserCreateRequest:
       type: object
       properties:
@@ -326,35 +460,239 @@ components:
         - name
         - email
         - password
+    CategoryRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+          enum: [income, expense]
+      required:
+        - id
+        - name
+        - type
+    CategoryCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [income, expense]
+        user_id:
+          type: integer
+      required:
+        - name
+        - type
+        - user_id
+    CategoryUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [income, expense]
+      required:
+        - name
+        - type
+    TransactionRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        category_id:
+          type: integer
+        date:
+          type: string
+          format: date
+        amount:
+          type: number
+          format: float
+        content:
+          type: string
+      required:
+        - id
+        - user_id
+        - category_id
+        - date
+        - amount
+    TransactionCreateRequest:
+      type: object
+      properties:
+        user_id:
+          type: integer
+        category_id:
+          type: integer
+        date:
+          type: string
+          format: date
+        amount:
+          type: number
+          format: float
+        content:
+          type: string
+      required:
+        - user_id
+        - category_id
+        - date
+        - amount
+    TransactionUpdateRequest:
+      type: object
+      properties:
+        user_id:
+          type: integer
+        category_id:
+          type: integer
+        date:
+          type: string
+          format: date
+        amount:
+          type: number
+          format: float
+        content:
+          type: string
+      required:
+        - user_id
+        - category_id
+        - date
+        - amount
+    MonthlySummaryRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        year_month:
+          type: string
+        income:
+          type: number
+          format: float
+        expense:
+          type: number
+          format: float
+        balance:
+          type: number
+          format: float
+      required:
+        - id
+        - year_month
+        - income
+        - expense
+        - balance
+    MonthlySummaryCreateRequest:
+      type: object
+      properties:
+        user_id:
+          type: integer
+        year_month:
+          type: string
+        income:
+          type: number
+          format: float
+        expense:
+          type: number
+          format: float
+        balance:
+          type: number
+          format: float
+      required:
+        - user_id
+        - year_month
+        - income
+        - expense
+        - balance
+    MonthlySummaryUpdateRequest:
+      type: object
+      properties:
+        income:
+          type: number
+          format: float
+        expense:
+          type: number
+          format: float
+        balance:
+          type: number
+          format: float
+        year_month:
+          type: string
+      required:
+        - income
+        - expense
+        - balance
+        - year_month
+
   requestBodies:
-    UserCreateRequest:
+    UserCreateRequestBody:
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/UserCreateRequest"
-    UserUpdateRequest:
+    UserUpdateRequestBody:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/UserUpdateRequest"        
+            $ref: "#/components/schemas/UserUpdateRequest"
+    CategoryCreateRequestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CategoryCreateRequest"
+    CategoryUpdateRequestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CategoryUpdateRequest"
+    TransactionCreateRequestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/TransactionCreateRequest"
+    TransactionUpdateRequestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/TransactionUpdateRequest"               
+    MonthlySummaryCreateRequestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MonthlySummaryCreateRequest"
+    MonthlySummaryUpdateRequestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MonthlySummaryUpdateRequest"             
+
   responses:            
     UserResponse:
       description: User response
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              id:
-                type: integer
-              email:
-                type: string
-              name:
-                type: string  
-            required:
-              - id
-              - name
-              - email
+            $ref: "#/components/schemas/UserRequest"
+    CategoryResponse:
+      description: Category response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CategoryRequest"
+    TransactionResponse:
+      description: Transaction response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/TransactionRequest"
+    MonthlySummaryResponse:
+      description: Monthly summary response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MonthlySummaryRequest"
     ErrorResponse:
       description: Error response
       content:
